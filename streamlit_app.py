@@ -1,23 +1,47 @@
 import streamlit as st
-
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy.stats import probplot
 import seaborn as sns
+from scipy.stats import probplot, boxcox
+from sqlalchemy import create_engine
 import mysql.connector
-import plotly.graph_objects as go
-import plotly.io as pio
-from plotly.subplots import make_subplots
-from scipy.stats import ttest_ind, mannwhitneyu
-from scipy.stats import boxcox
-from scipy import stats
-# hide warnings
 import warnings
-warnings.filterwarnings('ignore') 
+warnings.filterwarnings('ignore')
 
 # Streamlit app
-st.title("Data Visualisation Dashboard")
+st.title("Data Visualization Dashboard")
+
+# Database connection using secrets
+host = st.secrets["database"]["host"]
+port = st.secrets["database"]["port"]
+database = st.secrets["database"]["database"]
+username = st.secrets["database"]["username"]
+password = st.secrets["database"]["password"]
+
+# Connect to MySQL server
+try:
+    connection = mysql.connector.connect(
+        host=host,
+        user=username,
+        password=password,
+        database=database,
+        port=port
+    )
+    st.success("Database connection established!")
+except mysql.connector.Error as err:
+    st.error(f"Error: {err}")
+    st.stop()
+
+# Defined SQL query to select data from the table
+sql_query = "SELECT * FROM agricultural_combined_dataset"
+
+# Fetch data from MySQL database into a DataFrame
+try:
+    data = pd.read_sql(sql_query, connection)
+except Exception as e:
+    st.error(f"Error reading data: {e}")
+    st.stop()
 
 # QQ Plot
 st.header('QQ Plot')
