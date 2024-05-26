@@ -3,7 +3,6 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from scipy.stats import probplot
 import seaborn as sns
 import mysql.connector
